@@ -20,7 +20,7 @@
 unsigned char core_id = 0;
 
 static const char *core_names[] = {
-  "<unset>", "Atari ST", "C64", "VIC", "Amiga", "Atari 2600"
+  "<unset>", "Atari ST", "C64", "VIC", "Amiga", "Atari 2600","Spectrum"
 };
 
 const char *sys_get_config_name(void) {
@@ -30,7 +30,8 @@ const char *sys_get_config_name(void) {
     CARD_MOUNTPOINT "/c64.xml",
     CARD_MOUNTPOINT "/vic20.xml",
     CARD_MOUNTPOINT "/amiga.xml",
-    CARD_MOUNTPOINT "/atari2600.xml"
+    CARD_MOUNTPOINT "/atari2600.xml",
+    CARD_MOUNTPOINT "/spectrum.xml"
   };
   return config_xml[core_id];
 }
