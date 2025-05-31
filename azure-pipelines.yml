@@ -12,7 +12,9 @@ steps:
 - script: |
     ls
     cd src/bl616
+    echo 'Moved to source directory'
     ls
+    echo 'running make'
     make
   displayName: 'Build FPGA Companion'
 
