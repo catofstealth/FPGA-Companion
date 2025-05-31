@@ -10,12 +10,8 @@ pool: 'Local Build Agents'
 
 steps:
 - script: |
-    ls
     cd src/bl616
-    echo 'Moved to source directory'
-    ls
-    echo 'running make'
-    make
+    CROSS_COMPILE=/home/stealthcat/bl616/BouffaloToolchain/bin/riscv64-unknown-elf- BL_SDK_BASE=/home/stealthcat/bl616/ModifiedBouffaloSDK/ make
   displayName: 'Build FPGA Companion'
 
 - task: CopyFiles@2
