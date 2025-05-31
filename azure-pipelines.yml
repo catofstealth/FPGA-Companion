@@ -10,7 +10,9 @@ pool: 'Local Build Agents'
 
 steps:
 - script: |
+    ls
     cd src/bl616
+    ls
     make
   displayName: 'Build FPGA Companion'
 
