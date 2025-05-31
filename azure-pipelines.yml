@@ -10,6 +10,7 @@ pool: 'Local Build Agents'
 
 steps:
 - script: |
+    git submodule update --init --recursive
     cd src/bl616
     CROSS_COMPILE=/home/stealthcat/bl616/BouffaloToolchain/bin/riscv64-unknown-elf- BL_SDK_BASE=/home/stealthcat/bl616/ModifiedBouffaloSDK/ make
   displayName: 'Build FPGA Companion'
