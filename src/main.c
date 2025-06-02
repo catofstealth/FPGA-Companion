@@ -16,6 +16,8 @@
 #include "../xml.h"
 #include "../at_wifi.h"
 
+#include "usbfstest.h"
+
 /*-----------------------------------------------------------*/
 /*---            main FPGA communication task            ----*/
 /*-----------------------------------------------------------*/
@@ -100,7 +102,9 @@ static void com_task(__attribute__((unused)) void *p ) {
   /* This will only be reached if the FPGA is not ready */
   /* So loop foreever while e.g. USB is still being handled */
   /* e.g. for debugging */
-  for(;;) vTaskDelay(pdMS_TO_TICKS(250));
+  //for(;;) vTaskDelay(pdMS_TO_TICKS(250));
+
+  RunUsbStorageTest();
 }
 
 #ifdef ESP_PLATFORM
