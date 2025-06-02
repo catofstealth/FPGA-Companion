@@ -165,6 +165,9 @@
 #define CONFIG_USBHOST_MAX_VIDEO_CLASS      0
 //#define CONFIG_CHERRYUSB_HOST_RTL8152       1
 //#define CONFIG_CHERRYUSB_HOST_ASIX          1
+//CMakeLists doesnt enable this?
+#define CONFIG_CHERRYUSB_DEVICE_MSC         1
+#define CONFIG_FATFS_USBH                   1
 
 #define CONFIG_USBHOST_DEV_NAMELEN 16
 
