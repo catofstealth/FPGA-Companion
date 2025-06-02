@@ -67,7 +67,6 @@ target_sources(app PRIVATE
     ../at_wifi.c
     ../puff.c
 	../diskio.c
-	../usbh_msc.c
 	../usbfstest.c
 )
 

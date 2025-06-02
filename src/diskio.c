@@ -31,10 +31,10 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff) {
         case CTRL_SYNC:
             return RES_OK;
         case GET_SECTOR_COUNT:
-            *(DWORD *)buff = g_usbh_msc->block_count;
+            *(DWORD *)buff = g_usbh_msc->blocknum;
             return RES_OK;
         case GET_SECTOR_SIZE:
-            *(WORD *)buff = g_usbh_msc->block_size;
+            *(WORD *)buff = g_usbh_msc->blocksize;
             return RES_OK;
         case GET_BLOCK_SIZE:
             *(DWORD *)buff = 1;
