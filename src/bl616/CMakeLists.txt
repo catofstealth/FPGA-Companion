@@ -66,6 +66,9 @@ target_sources(app PRIVATE
    	../xml.c
     ../at_wifi.c
     ../puff.c
+	../diskio.c
+	../usbh_msc.c
+	../usbfstest.c
 )
 
 file(GLOB COMPONENT_SRCS ../u8g2/csrc/*.c  ../u8g2/sys/bitmap/common/*.c)
