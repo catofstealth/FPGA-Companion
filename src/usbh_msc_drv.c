@@ -195,13 +195,14 @@ int MSCUSB_disk_status(void)
 int MSCUSB_disk_initialize(void)
 {
     char *path = "/dev/sda";
-    char *mntpath = "usb";
+    //not sure if we need the below...
     active_msc_class = (struct usbh_msc *)usbh_find_class_instance(path);
     if (active_msc_class == NULL) {
         printf("do not find %s\r\n", path);
         return RES_NOTRDY;
     }
 
+    char *mntpath = "/usb";
     FRESULT res = f_mount(&usbfs, mntpath, 1);  // Mount the root directory
     if (res == FR_OK)
     {
