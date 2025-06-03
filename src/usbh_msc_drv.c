@@ -17,7 +17,7 @@
 #include "debug.h"
 
 // Define a global variable for FatFS
-static FATFS fs;  // FatFS file system object
+static FATFS usbfs;  // FatFS file system object
 static FIL fil[MAX_DRIVES];
 static DWORD *lktbl[MAX_DRIVES];
 
@@ -57,7 +57,7 @@ static int fs_init()
 
   MSCUSB_disk_initialize(); //????
 
-  res_msc = f_mount(&fs, "/dev/sda", 1);
+  res_msc = f_mount(&usbfs, "/dev/sda", 1);
   if (res_msc != FR_OK) {
     msc_debugf("mount fail,res:%d", res_msc);
     return -1;
@@ -71,14 +71,18 @@ static int fs_init()
 //use this to get the msc_class object we need to interface with our device
 void usbh_msc_run(struct usbh_msc *msc_class)
 {
-    //_msc_class = msc_class;
+    active_msc_class = msc_class;
 
     //do this on insert so we can check we are initialised?
-    usbh_msc_scsi_init(msc_class);
+    usbh_msc_scsi_init(active_msc_class);
 
     //create a FatFS object and register it here...
 
-
+    if(MSCUSB_disk_initialize() != RES_OK)
+    {
+        msc_debugf("USB storage failed to initialise successfully\n");
+        return;
+    }
 
     msc_debugf("MSC Device configured and ready\r\n");
 
@@ -165,7 +169,7 @@ void usbh_msc_run(struct usbh_msc *msc_class)
 //   // SD card inserted
 
 //   //TODO use location of usb storage rather than the first?
-//   res_msc = f_mount(&fs, "/de/sda", 1);
+//   res_msc = f_mount(&usbfs, "/de/sda", 1);
 //   if (res_msc != FR_OK) {
 //     sdc_debugf("mount fail,res:%d", res_msc);
 //     sys_set_rgb(0x400000);  // red, failed
@@ -195,6 +199,15 @@ int MSCUSB_disk_initialize(void)
         printf("do not find /dev/sda\r\n");
         return RES_NOTRDY;
     }
+
+    FRESULT res = f_mount(&usbfs, "/dev/sda", 1);  // Mount the root directory
+    if (res == FR_OK)
+    {
+        msc_debugf("USB filesystem failed to mount successfully %d\n", res);
+        return RES_ERROR;
+    }
+
+    msc_debugf("USB storage mounted successfully!\n");
     return RES_OK;
 }
 
@@ -257,7 +270,7 @@ void fatfs_mscusbh_driver_register(void)
     USBH_DiskioDriver.disk_ioctl = MSCUSB_disk_ioctl;
     USBH_DiskioDriver.error_code_parsing = MSCUSB_Translate_Result_Code;
 
-    msc_debugf("FatFS Registered\n");
+    msc_debugf("FatFS Driver Registered\n");
 
     disk_driver_callback_init(DEV_USB, &USBH_DiskioDriver);
 }
@@ -267,21 +280,6 @@ void fatfs_mscusbh_driver_register(void)
 
 void OpenTestFile()
 {
-    if(USB_disk_initialize() != RES_OK)
-    {
-        msc_debugf("USB storage failed to initialise successfully\n");
-        return;
-    }
-
-    // fopen will mount the file hmmm
-    // FRESULT res = f_mount(&fs, "/dev/sda", 1);  // Mount the root directory
-    // if (res == FR_OK)
-    // {
-    //     msc_debugf("USB filesystem failed to mount successfully %d\n", res);
-    //     return;
-    // }
-
-    //msc_debugf("USB storage mounted successfully!\n");
     FIL file;
 
     FRESULT res = f_open(&file, "test.txt", FA_READ);
@@ -314,22 +312,13 @@ void ListDirectory(char* path)
     char string[128];
 
     //we want to be able to check initiailisationa nd mount status and so this once ratehr than doing ti eahc time
-    if(USB_disk_initialize() != RES_OK)
+    if(MSCUSB_disk_initialize() != RES_OK)
     {
         msc_debugf("USB storage failed to initialise successfully\n");
         return;
     }
 
-    FRESULT res = f_mount(&fs, "/dev/sda", 1);  // Mount the root directory
-    if (res == FR_OK)
-    {
-        msc_debugf("USB filesystem failed to mount successfully %d\n", res);
-        return;
-    }
-
-    msc_debugf("USB storage mounted successfully!\n");
-
-    res = f_opendir(&dir, path);
+    FRESULT res = f_opendir(&dir, path);
 
     if (res != FR_OK)
     {

@@ -112,11 +112,6 @@ static void com_task(__attribute__((unused)) void *p ) {
   for(;;) vTaskDelay(pdMS_TO_TICKS(250));
 }
 
-#include "ff.h"  // FatFS header file
-
-FATFS fs;  // File system object
-FIL file;  // File object
-
 static void TestReadUsbMscDevice(__attribute__((unused)) void *p )
 {
   for(;;){
