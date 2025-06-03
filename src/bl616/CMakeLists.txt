@@ -11,6 +11,12 @@ set(CONFIG_SHELL 1)
 set(CONFIG_CHERRYUSB_OSAL "freertos")
 set(CONFIG_CHERRYUSB_HOST_HCD "ehci_bouffalo")
 set(CONFIG_CHERRYUSB_HOST_HID 1)
+
+# host usb MSC for flahs drives
+# set(CONFIG_CHERRYUSB_HOST_ECM 1) #not needed?
+set(CONFIG_CHERRYUSB_HOST_MSC 1)
+set(CONFIG_FATFS_USBH     1)
+
 # set(CONFIG_CHERRYMP 0)
 # set(CONFIG_CHERRYRB 0)
 set(CONFIG_VSNPRINTF_FLOAT      1)
@@ -59,6 +65,7 @@ target_sources(app PRIVATE
    	../inifile.c
    	../menu.c
    	../sdc.c
+    ../usbh_msc_drv.c
    	../osd_u8g2.c
    	../sysctrl.c
    	../config.c

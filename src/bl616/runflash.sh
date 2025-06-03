@@ -1,0 +1,1 @@
+make CHIP=bl616 COMX=/dev/ttyACM0 flash

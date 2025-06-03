@@ -1,0 +1,1 @@
+CROSS_COMPILE=/home/stealthcat/Documents/GitHub/toolchain_gcc_t-head_linux/bin/riscv64-unknown-elf- BL_SDK_BASE=/home/stealthcat/Documents/GitHub/bouffalo_sdk/ make

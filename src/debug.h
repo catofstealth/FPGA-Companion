@@ -13,6 +13,7 @@
 #define hidp_debugf(a, ...) debugf("\033[0;35mHDP: " a "\033[0m", ##__VA_ARGS__)  // magenta
 #define osd_debugf(a, ...)  debugf("\033[0;36mOSD: " a "\033[0m", ##__VA_ARGS__)  // cyan
 #define menu_debugf(a, ...) debugf("\033[1;33mMNU: " a "\033[0m", ##__VA_ARGS__)  // bold yellow
+#define msc_debugf(a, ...)  debugf("\033[0;33mMSC: " a "\033[0m", ##__VA_ARGS__)  // yellow
 
 #include <ctype.h>
 static inline void hexdump(const void *data, int size) {

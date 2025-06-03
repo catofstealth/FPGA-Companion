@@ -52,6 +52,8 @@ int sdc_read_sector(unsigned long sector, unsigned char *buffer) {
   // be reading a sector for the core. Forcing a MCU read
   // may change the data direction from core to mcu while
   // the core is still reading
+  sdc_debugf("SDC_READ_SECTOR is being called instead of SDK version?");
+
   unsigned char status;
   do {
     sdc_spi_begin();  

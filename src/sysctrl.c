@@ -19,6 +19,28 @@
 #include "mcu_hw.h"
 #include "at_wifi.h"
 
+
+//extern?
+struct usbh_class_info {
+    uint8_t match_flags;           /* Used for product specific matches; range is inclusive */
+    uint8_t bInterfaceClass;       /* Base device class code */
+    uint8_t bInterfaceSubClass;    /* Sub-class, depends on base class. Eg. */
+    uint8_t bInterfaceProtocol;    /* Protocol, depends on base class. Eg. */
+    const uint16_t (*id_table)[2]; /* List of Vendor/Product ID pairs */
+    const struct usbh_class_driver *class_driver;
+};
+
+struct usbh_hubport;
+struct usbh_class_driver {
+    const char *driver_name;
+    int (*connect)(struct usbh_hubport *hport, uint8_t intf);
+    int (*disconnect)(struct usbh_hubport *hport, uint8_t intf);
+};
+
+
+struct usbh_class_info *usbh_class_info_table_begin_test = NULL;
+struct usbh_class_info *usbh_class_info_table_end_test = NULL;
+
 // we are using "puff" to decompress a gzip'd FPGA config as this is a slow, yet
 // very small and memory efficient implementation of the deflate de-compression
 #include "puff.h"
@@ -299,6 +321,10 @@ void sys_handle_interrupts(unsigned char pending, bool ignore_coldboot) {
   //    audio_handle_event();
 }
 
+
+
+
+
 bool sys_wait4fpga(void) {
   sys_debugf("Waiting for FPGA to become ready");
   
@@ -330,6 +356,33 @@ bool sys_wait4fpga(void) {
   // this is basically useless and will only work if the
   // FPGA receives requests but cannot answer them
   sys_set_rgb(0x400000);  // red
+
+  //TESTING, list out our loaded USB drivers 
+  #ifdef __ARMCC_VERSION /* ARM C Compiler */
+    extern const int usbh_class_info$$Base;
+    extern const int usbh_class_info$$Limit;
+    usbh_class_info_table_begin_test = (struct usbh_class_info *)&usbh_class_info$$Base;
+    usbh_class_info_table_end_test = (struct usbh_class_info *)&usbh_class_info$$Limit;
+  #elif defined(__GNUC__)
+      extern uint32_t __usbh_class_info_start__;
+      extern uint32_t __usbh_class_info_end__;
+      usbh_class_info_table_begin_test = (struct usbh_class_info *)&__usbh_class_info_start__;
+      usbh_class_info_table_end_test = (struct usbh_class_info *)&__usbh_class_info_end__;
+  #elif defined(__ICCARM__) || defined(__ICCRX__)
+      usbh_class_info_table_begin_test = (struct usbh_class_info *)__section_begin("usbh_class_info");
+      usbh_class_info_table_end_test = (struct usbh_class_info *)__section_end("usbh_class_info");
+  #endif
+
+  struct usbh_class_info *index = NULL;
+  sys_debugf("Loaded USB Drivers :");
+  for (index = usbh_class_info_table_begin_test; index < usbh_class_info_table_end_test; index++)
+  {
+    if(index->class_driver->driver_name == "hub" || index->class_driver->driver_name == "msc")
+    {
+      sys_debugf(" - %s", index->class_driver->driver_name);
+    }
+  }
+  
   return false;
 }
 
