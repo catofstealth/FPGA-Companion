@@ -23,58 +23,13 @@ static DWORD *lktbl[MAX_DRIVES];
 
 struct usbh_msc *active_msc_class;
 
-static int fs_init() 
-{
-  FRESULT res_msc;
-
-  for(int i=0;i<MAX_DRIVES;i++)
-    lktbl[i] = NULL;
-
-//do this on init instead of here? or do this for every connected device?
-// #ifdef DEV_USB
-//   FATFS_DiskioDriverTypeDef MSC_DiskioDriver = { NULL };
-//   MSC_DiskioDriver.disk_status = msc_status;
-//   MSC_DiskioDriver.disk_initialize = msc_initialize;
-//   MSC_DiskioDriver.disk_write = msc_write;
-//   MSC_DiskioDriver.disk_read = msc_read;
-//   MSC_DiskioDriver.disk_ioctl = msc_ioctl;
-//   MSC_DiskioDriver.error_code_parsing = Translate_Result_Code;
-
-//   disk_driver_callback_init(DEV_SD, &MSC_DiskioDriver);
-// #endif
-
-// #ifdef ESP_PLATFORM
-//   const ff_diskio_impl_t sdc_impl = {
-//     .init = sdc_disk_initialize,
-//     .status = sdc_disk_status,
-//     .read = sdc_disk_read,
-//     .write = sdc_disk_write,
-//     .ioctl = sdc_disk_ioctl,
-//   };
-
-//   ff_diskio_register(0, &sdc_impl);
-// #endif
-
-  MSCUSB_disk_initialize(); //????
-
-  res_msc = f_mount(&usbfs, "/dev/sda", 1);
-  if (res_msc != FR_OK) {
-    msc_debugf("mount fail,res:%d", res_msc);
-    return -1;
-  }
-
-
-  return 0;
-}
 
 //override the __WEAK run method called in usbh_msc
 //use this to get the msc_class object we need to interface with our device
 void usbh_msc_run(struct usbh_msc *msc_class)
 {
-    active_msc_class = msc_class;
-
     //do this on insert so we can check we are initialised?
-    usbh_msc_scsi_init(active_msc_class);
+    usbh_msc_scsi_init(msc_class);
 
     //create a FatFS object and register it here...
 
@@ -90,100 +45,12 @@ void usbh_msc_run(struct usbh_msc *msc_class)
 
     //do this part in our main logic elsewhere ...
 
-    OpenTestFile();
+    //OpenTestFile();
 
 }
 
-// -------------------- fatfs read/write interface to USB MSC Connected to USB hub -------------------
-
-// static DRESULT msc_read(BYTE *buff, LBA_t sector, UINT count) {
-//   msc_debugf("msc_read(%p,%lu,%u)", buff, sector, count);
-//   msc_read_sector(sector, buff);
-//   return 0;
-// }
-
-// static DRESULT msc_write(const BYTE *buff, LBA_t sector, UINT count) {
-//   msc_debugf("msc_write(%p,%lu,%u)", buff, sector, count);
-//   msc_write_sector(sector, buff);
-//   return 0;
-// }
-
-// static DRESULT msc_ioctl(BYTE cmd, void *buff) {
-//   msc_debugf("msc_ioctl(%d,%p)", cmd, buff);
-
-//   switch(cmd) {
-//   case GET_SECTOR_SIZE:
-//     *((WORD*) buff) = 512;
-//     return RES_OK;
-//     break;
-//   }
-
-//   return RES_ERROR;
-// }
-
-// //we want to handle everything ourselves?
-// DRESULT disk_ioctl(__attribute__((unused)) BYTE pdrv, BYTE cmd, void *buff) { return sdc_ioctl(cmd, buff); }
-// DRESULT disk_read(__attribute__((unused)) BYTE pdrv, BYTE *buff, LBA_t sector, UINT count) { return sdc_read(buff, sector, count); }
-// DRESULT disk_write(__attribute__((unused)) BYTE pdrv, const BYTE *buff, LBA_t sector, UINT count) { return sdc_write(buff, sector, count); }
-// DSTATUS disk_status(__attribute__((unused)) BYTE pdrv) { return 0; }
-
-// //init is done via call back when USB device is loaded
-// //we want to load the file system there?
-
-
-// static int fs_init() {
-//   FRESULT res_msc;
-
-//   for(int i=0;i<MAX_DRIVES;i++)
-//     lktbl[i] = NULL;
-
-// //#ifdef DEV_SD
-//   FATFS_DiskioDriverTypeDef MSC_DiskioDriver = { NULL };
-//   MSC_DiskioDriver.disk_status = msc_status;
-//   MSC_DiskioDriver.disk_initialize = msc_initialize;
-//   MSC_DiskioDriver.disk_write = msc_write;
-//   MSC_DiskioDriver.disk_read = msc_read;
-//   MSC_DiskioDriver.disk_ioctl = msc_ioctl;
-//   MSC_DiskioDriver.error_code_parsing = Translate_Result_Code;
-
-//   //DEV_SD is the physical drive number, we only have the path but we can get this via lookup
-
-//   disk_driver_callback_init(DEV_USB, &MSC_DiskioDriver);
-// //#endif
-
-// //only doing BL616 for now..
-// // #ifdef ESP_PLATFORM
-// //   const ff_diskio_impl_t sdc_impl = {
-// //     .init = sdc_disk_initialize,
-// //     .status = sdc_disk_status,
-// //     .read = sdc_disk_read,
-// //     .write = sdc_disk_write,
-// //     .ioctl = sdc_disk_ioctl,
-// //   };
-
-// //   ff_diskio_register(0, &sdc_impl);
-// // #endif
-
-//   // getting here with a timeout either means that there
-//   // is no matching core on the FPGA or that there is no
-//   // SD card inserted
-
-//   //TODO use location of usb storage rather than the first?
-//   res_msc = f_mount(&usbfs, "/de/sda", 1);
-//   if (res_msc != FR_OK) {
-//     sdc_debugf("mount fail,res:%d", res_msc);
-//     sys_set_rgb(0x400000);  // red, failed
-//     return -1;
-//   }
-
-//   return 0;
-// }
-
-
 //implement FatFS using the local source code copy instead of the one provide in bouffalo SDK.
 //we need to link this to the MSC stuff
-
-
 
 struct usbh_msc *active_msc_class;
 
@@ -194,6 +61,10 @@ int MSCUSB_disk_status(void)
 
 int MSCUSB_disk_initialize(void)
 {
+    // initialisation is taken care for us, we just need to mount the file system
+    // now the interrupt has been loaded. We probably want to move this into a thread
+    // to prevent watchdog reset timerz
+
     // char *path = "/dev/sda";
     // //not sure if we need the below...
     // active_msc_class = (struct usbh_msc *)usbh_find_class_instance(path);
@@ -315,6 +186,7 @@ void ListDirectory(char* path)
     UINT BytesWritten;
     char string[128];
 
+    //remount?
     //we want to be able to check initiailisationa nd mount status and so this once ratehr than doing ti eahc time
     if(MSCUSB_disk_initialize() != RES_OK)
     {
@@ -345,7 +217,4 @@ void ListDirectory(char* path)
         (int)fno.fsize, path, fno.fname);
 
     msc_debugf("%s", string);
-
-
-
 }

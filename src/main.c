@@ -122,9 +122,9 @@ static void TestReadUsbMscDevice(__attribute__((unused)) void *p )
 
     OpenTestFile(); //try to run our USB driver to get the test file
 
-    ListDirectory("/");
-    ListDirectory("/dev/sda");
-    ListDirectory("/dev/sda/");
+    // ListDirectory("/");
+    // ListDirectory("/dev/sda");
+    // ListDirectory("/dev/sda/");
 
     vTaskDelay(pdMS_TO_TICKS(1000));
   } 
@@ -146,7 +146,7 @@ int main( void )
 
   //load our test for reading USB MSC
   //printf("Main loop entering test function :\r\n");
-  //xTaskCreate( TestReadUsbMscDevice, "Test Read Usb Msc Device", 4096, NULL, CONFIG_MAX_PRIORITY-1, &testReadUsbMscDevice_handle );
+  xTaskCreate( TestReadUsbMscDevice, "Test Read Usb Msc Device", 4096, NULL, CONFIG_MAX_PRIORITY-1, &testReadUsbMscDevice_handle );
 
   mcu_hw_main_loop();
 
