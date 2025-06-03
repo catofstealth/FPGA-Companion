@@ -194,15 +194,15 @@ int MSCUSB_disk_status(void)
 
 int MSCUSB_disk_initialize(void)
 {
-    //char *path = "/dev/sda";
-    char *path = "usb";
+    char *path = "/dev/sda";
+    char *mntpath = "usb";
     active_msc_class = (struct usbh_msc *)usbh_find_class_instance(path);
     if (active_msc_class == NULL) {
         printf("do not find %s\r\n", path);
         return RES_NOTRDY;
     }
 
-    FRESULT res = f_mount(&usbfs, path, 1);  // Mount the root directory
+    FRESULT res = f_mount(&usbfs, mntpath, 1);  // Mount the root directory
     if (res == FR_OK)
     {
         msc_debugf("USB filesystem failed to mount successfully %d\n", res);
