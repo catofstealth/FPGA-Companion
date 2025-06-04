@@ -39,30 +39,7 @@ void usbh_msc_run(struct usbh_msc *msc_class)
     //     return;
     // }
 
- // initialisation is taken care for us, we just need to mount the file system
-    // now the interrupt has been loaded. We probably want to move this into a thread
-    // to prevent watchdog reset timerz
-
-    // char *path = "/dev/sda";
-    // //not sure if we need the below...
-    // active_msc_class = (struct usbh_msc *)usbh_find_class_instance(path);
-    // if (active_msc_class == NULL) {
-    //     printf("do not find %s\r\n", path);
-    //     return RES_NOTRDY;
-    // }
-    
-    //fatfs uses /usb mount point but msc driver uses /dev/sdX!
-    char *mntpath = "/usb";
-    FRESULT res = f_mount(&usbfs, mntpath, 1);  // Mount the root directory
-    if (res == FR_OK)
-    {
-        msc_debugf("USB filesystem failed to mount successfully %d\n", res);
-        return RES_ERROR;
-    }
-
-    //msc_debugf("USB storage mounted successfully!\n");
-
-    msc_debugf("MSC Device configured and ready\r\n");
+    // msc_debugf("MSC Device configured and ready\r\n");
 
 
 
@@ -82,9 +59,35 @@ int MSCUSB_disk_status(void)
     return 0;
 }
 
+int MSCUSB_fs_init(void)
+{
+char *mntpath = "/usb";
+    FRESULT res = f_mount(&usbfs, mntpath, 1);  // Mount the root directory
+    if (res == FR_OK)
+    {
+        msc_debugf("USB filesystem failed to mount successfully %d\n", res);
+        return RES_ERROR;
+    }
+}
+
 int MSCUSB_disk_initialize(void)
 {
-   
+    // initialisation is taken care for us, we just need to mount the file system
+    // now the interrupt has been loaded. We probably want to move this into a thread
+    // to prevent watchdog reset timerz
+
+    // char *path = "/dev/sda";
+    // //not sure if we need the below...
+    // active_msc_class = (struct usbh_msc *)usbh_find_class_instance(path);
+    // if (active_msc_class == NULL) {
+    //     printf("do not find %s\r\n", path);
+    //     return RES_NOTRDY;
+    // }
+    
+    //fatfs uses /usb mount point but msc driver uses /dev/sdX!
+    MSCUSB_fs_init(); //try calling this from main next time to mount/unmount?
+
+    //msc_debugf("USB storage mounted successfully!\n");
     return RES_OK;
 }
 
