@@ -61,7 +61,7 @@ int MSCUSB_disk_status(void)
 
 int MSCUSB_fs_init()
 {
-char *mntpath = "/usb";
+    char *mntpath = "/usb";
     FRESULT res = f_mount(&usbfs, mntpath, 1);  // Mount the root directory
     if (res == FR_OK)
     {
@@ -74,7 +74,8 @@ char *mntpath = "/usb";
 
 int MSCUSB_fs_close()
 {
-FRESULT res = f_mount(NULL, mntpath, 1);  // Mount the root directory
+    char *mntpath = "/usb";
+    FRESULT res = f_mount(NULL, mntpath, 1);  // Mount the root directory
     if (res == FR_OK)
     {
         msc_debugf("USB filesystem failed to unmount successfully %d\n", res);
