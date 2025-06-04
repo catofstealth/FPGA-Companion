@@ -120,6 +120,8 @@ static void TestReadUsbMscDevice(__attribute__((unused)) void *p )
 
     printf("Attempting to fetch test data \r\n");
 
+    MSCUSB_fs_init();
+
     OpenTestFile(); //try to run our USB driver to get the test file
 
     ListDirectory("/");

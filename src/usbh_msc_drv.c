@@ -85,7 +85,7 @@ int MSCUSB_disk_initialize(void)
     // }
     
     //fatfs uses /usb mount point but msc driver uses /dev/sdX!
-    MSCUSB_fs_init(); //try calling this from main next time to mount/unmount?
+    //MSCUSB_fs_init(); //try calling this from main next time to mount/unmount?
 
     //msc_debugf("USB storage mounted successfully!\n");
     return RES_OK;
