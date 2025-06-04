@@ -188,14 +188,6 @@ void ListDirectory(char* path)
     UINT BytesWritten;
     char string[128];
 
-    //remount?
-    //we want to be able to check initiailisationa nd mount status and so this once ratehr than doing ti eahc time
-    if(MSCUSB_disk_initialize() != RES_OK)
-    {
-        msc_debugf("USB storage failed to initialise successfully\n");
-        return;
-    }
-
     FRESULT res = f_opendir(&dir, path);
 
     if (res != FR_OK)
