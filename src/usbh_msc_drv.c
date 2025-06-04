@@ -82,7 +82,7 @@ int MSCUSB_disk_initialize(void)
         return RES_ERROR;
     }
 
-    msc_debugf("USB storage mounted successfully!\n");
+    //msc_debugf("USB storage mounted successfully!\n");
     return RES_OK;
 }
 
@@ -156,6 +156,8 @@ void fatfs_mscusbh_driver_register(void)
 void OpenTestFile()
 {
     FIL file;
+
+    msc_debugf("Opening file test.txt.\n");
 
     FRESULT res = f_open(&file, "test.txt", FA_READ);
     if (res == FR_OK) {
