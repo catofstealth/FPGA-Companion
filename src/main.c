@@ -116,15 +116,19 @@ static void TestReadUsbMscDevice(__attribute__((unused)) void *p )
 {
   for(;;){
 
-    vTaskDelay(pdMS_TO_TICKS(8000));
+    vTaskDelay(pdMS_TO_TICKS(5000));
 
     printf("Attempting to fetch test data \r\n");
 
     MSCUSB_fs_init();
 
-    OpenTestFile(); //try to run our USB driver to get the test file
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    
+    MSCUSB_fs_close();
 
-    ListDirectory("/");
+    //OpenTestFile(); //try to run our USB driver to get the test file
+
+    //ListDirectory("/");
     // ListDirectory("/dev/sda");
     // ListDirectory("/dev/sda/");
 
@@ -144,7 +148,7 @@ int main( void )
   fatfs_mscusbh_driver_register();
 
   // run FPGA com thread
-  xTaskCreate( com_task, "FPGA Com", 4096, NULL, CONFIG_MAX_PRIORITY-1, &com_task_handle );
+  //xTaskCreate( com_task, "FPGA Com", 4096, NULL, CONFIG_MAX_PRIORITY-1, &com_task_handle );
 
   //load our test for reading USB MSC
   //printf("Main loop entering test function :\r\n");

@@ -9,5 +9,5 @@ void OpenTestFile();
 int MSCUSB_disk_initialize();
 void ListDirectory(char* path);
 int MSCUSB_fs_init(void);
-
+int MSCUSB_fs_close(void);
 #endif /* USBH_MSC_DRV_H */

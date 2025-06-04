@@ -59,7 +59,7 @@ int MSCUSB_disk_status(void)
     return 0;
 }
 
-int MSCUSB_fs_init(void)
+int MSCUSB_fs_init()
 {
 char *mntpath = "/usb";
     FRESULT res = f_mount(&usbfs, mntpath, 1);  // Mount the root directory
@@ -68,6 +68,20 @@ char *mntpath = "/usb";
         msc_debugf("USB filesystem failed to mount successfully %d\n", res);
         return RES_ERROR;
     }
+
+    msc_debugf("USB storage mounted successfully!\n");
+}
+
+int MSCUSB_fs_close()
+{
+FRESULT res = f_mount(null, mntpath, 1);  // Mount the root directory
+    if (res == FR_OK)
+    {
+        msc_debugf("USB filesystem failed to unmount successfully %d\n", res);
+        return RES_ERROR;
+    }
+
+    msc_debugf("USB storage unmounted successfully!\n");
 }
 
 int MSCUSB_disk_initialize(void)
